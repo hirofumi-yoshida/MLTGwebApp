@@ -78,13 +78,25 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
   for (let nft of resNft.result) {
     const tmp = JSON.parse(nft.metadata);
     console.log(JSON.stringify(tmp));
-    if (tmp !== null) {//MetaguriのNFTだったらに変更///////////////////////////
+    if (tmp !== null) {
+      const optionTokenInfo = {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer keypjfrOALL1xCF3r'//AirTableのAPIキー
+        }
+      };
+      const resTokenInfo = await fetch(`https://api.airtable.com/v0/appq0R9tJ2BkvKhRt/tblGeRuC0iRypjYfl?filterByFormula=AND(%7BContract_ID%7D%3D%22${nft.token_address}%22+%2C%7BToken_ID%7D%3D${nft.token_id})`, optionTokenInfo);
+      const resTokenInfoJson = await resTokenInfo.json();
+      console.log(JSON.stringify(resTokenInfoJson.records[0]));
       const nftinfo = {
         contract_name: nft.name,
         image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
         nft_name: tmp.name,
-        present_detail: "いちご",//Airtableから引っ張ってくる/////////////
-        token_address: nft.token_address
+        present_detail: resTokenInfoJson.records[0].fields.Thanks_Gift,
+        token_address: nft.token_address,
+        token_id: nft.token_id,
+        amount: nft.amount,
+        key_id: resTokenInfoJson.records[0].fields.Key_ID
       }
       nfts.push(nftinfo);
     }
@@ -222,7 +234,7 @@ const handleNewContract = async (account, chainName, setDisable, setCollections,
   document.getElementById("reloadContract").click();
 
 }
-
+//申込みボタンを押した後
 const handleMint = async (selectedCollection, chainName, setDisable, setMintedNfts, setShow) => {
   setDisable(true);
 
@@ -297,6 +309,58 @@ const handleLogout = async () => {
   window.location.href = "/";
 }
 
+const handleSubmit = async (account, nft, chainName, setDisable) => {
+  setDisable(true);
+
+  let cn = chainName;
+  if (chainName === "eth") {
+    cn = "mainnet";
+  }
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send('eth_requestAccounts', []);
+  const signer = await provider.getSigner();
+
+  const sdk = ThirdwebSDK.fromSigner(signer, cn);
+  const contract = await sdk.getContract(nft.token_address);
+
+  const walletAddress = "0x6D8Dd5Cf6fa8DB2be08845b1380e886BFAb03E07";
+
+  const amount = 1;
+
+  const tokenId = nft.token_id;
+
+  try {
+    await contract.erc1155.transfer(walletAddress, tokenId, amount);
+
+    const headers = {
+      'Authorization': 'Bearer keypjfrOALL1xCF3r',//AirTableのAPIキー
+      "Content-Type": "application/json"
+    };
+    const method = "POST";
+    const submitBody = {
+      "records": [
+        {
+          "fields": {
+            "Key_ID": nft.key_id,
+            "Thanks_Gift": nft.present_detail,
+            "Name": document.getElementById("Name").value,
+            "Zip_Code": document.getElementById("Zip_Code").value,
+            "Address": document.getElementById("Address").value,
+            "Tel": document.getElementById("Tel").value,
+            "Mail": document.getElementById("Mail").value
+          }
+        },
+      ]
+    };
+    const body = JSON.stringify(submitBody);
+    const resTokenInfo = await fetch(`https://api.airtable.com/v0/appq0R9tJ2BkvKhRt/tbld2laNlKCi7B2GW`, { method, headers, body });
+    document.getElementById("GetAccountButton").click();
+  } catch (error) {
+    console.error(error);
+  }
+  setDisable(false);
+
+}
 
 function App() {
   const [account, setAccount] = useState("");
@@ -313,6 +377,8 @@ function App() {
   const [mintedNfts, setMintedNfts] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState("");
   const [selectedCollectionName, setSelectedCollectionName] = useState("");
+
+  const [selectedGiftNft, setSelectedGiftNft] = useState("");
 
   const location = window.location.pathname.toLowerCase();
 
@@ -393,6 +459,7 @@ function App() {
                   <th>コントラクト</th>
                   <th>NFT名</th>
                   <th>もらえるもの</th>
+                  <th>数量</th>
                   <th>引き換え</th>
                 </tr>
               </thead>
@@ -404,7 +471,8 @@ function App() {
                       <td>{nft.contract_name}</td>
                       <td>{nft.nft_name}</td>
                       <td>{nft.present_detail}</td>
-                      <td><Button className="px-4" variant="outline-dark" onClick={() => handleShowDetail(nft)}>引き換え</Button></td>
+                      <td>{nft.amount}</td>
+                      <td><input class="form-check-input" type="radio" name="flexRadioDefault" id={index} onClick={() => setSelectedNft(nft)} /></td>
                     </tr>
                   );
                 })) : (
@@ -412,7 +480,51 @@ function App() {
                 )}
               </tbody>
             </Table>
-
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label>お名前</Form.Label>
+                <Form.Control id="Name" type="text" />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>郵便番号</Form.Label>
+                <Form.Control id="Zip_Code" type="text" placeholder="000-0000" />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>ご住所</Form.Label>
+                <Form.Control id="Address" type="text" placeholder="都道府県市町村番地建物" />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>電話番号</Form.Label>
+                <Form.Control id="Tel" type="text" placeholder="000-0000-0000" />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>通知先メールアドレス</Form.Label>
+                <Form.Control id="Mail" type="email" placeholder="experience@metagri-labo.com" />
+                {/* <Form.Text className="text-muted">
+                  ご連絡に使用します。
+                </Form.Text> */}
+              </Form.Group>
+            </Form>
+            {disable === false ? (
+              <>
+                <Button className="px-4" variant="outline-dark" onClick={handleClose}>
+                  キャンセル
+                </Button>
+                <Button className="px-4" variant="dark" onClick={() => handleSubmit(account, selectedNft, chainName, setDisable)}>
+                  申し込む
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button className="px-4" variant="outline-dark" disabled={true}>
+                  キャンセル
+                </Button>
+                <Button className="px-4" variant="dark" disabled={true}>
+                  <span className="me-2 spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <span>数分かかる場合があります...</span>
+                </Button>
+              </>
+            )}
           </Container>
         </>
 
