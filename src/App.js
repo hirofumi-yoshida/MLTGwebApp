@@ -82,23 +82,25 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
       const optionTokenInfo = {
         method: 'GET',
         headers: {
-          'Authorization': 'Bearer keypjfrOALL1xCF3r'//AirTableのAPIキー
+          'Authorization': 'Bearer keypjfrOALL1xCF3r',//AirTableのAPIキー
         }
       };
-      const resTokenInfo = await fetch(`https://api.airtable.com/v0/appq0R9tJ2BkvKhRt/tblGeRuC0iRypjYfl?filterByFormula=AND(%7BContract_ID%7D%3D%22${nft.token_address}%22+%2C%7BToken_ID%7D%3D${nft.token_id})`, optionTokenInfo);
+      const resTokenInfo = await fetch(`https://api.airtable.com/v0/appq0R9tJ2BkvKhRt/tblGeRuC0iRypjYfl?filterByFormula=AND(%7BContract_ID%7D%3D%22${nft.token_address}%22%2C%7BToken_ID%7D%3D${nft.token_id})`, optionTokenInfo);
       const resTokenInfoJson = await resTokenInfo.json();
-      console.log(JSON.stringify(resTokenInfoJson.records[0]));
-      const nftinfo = {
-        contract_name: nft.name,
-        image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
-        nft_name: tmp.name,
-        present_detail: resTokenInfoJson.records[0].fields.Thanks_Gift,
-        token_address: nft.token_address,
-        token_id: nft.token_id,
-        amount: nft.amount,
-        key_id: resTokenInfoJson.records[0].fields.Key_ID
+      if (resTokenInfoJson.records[0] !== undefined) {
+        console.log(JSON.stringify(resTokenInfoJson.records[0]));
+        const nftinfo = {
+          contract_name: nft.name,
+          image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
+          nft_name: tmp.name,
+          present_detail: resTokenInfoJson.records[0].fields.Thanks_Gift,
+          token_address: nft.token_address,
+          token_id: nft.token_id,
+          amount: nft.amount,
+          key_id: resTokenInfoJson.records[0].fields.Key_ID
+        }
+        nfts.push(nftinfo);
       }
-      nfts.push(nftinfo);
     }
   }
 
