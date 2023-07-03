@@ -74,6 +74,8 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
   const resNft = await resNftData.json();
   console.log(JSON.stringify(resNft));
 
+  // nft.token_address = Contract_ID,nft.token_id=Token_ID
+
   let nfts = [];
   for (let nft of resNft.result) {
     const tmp = JSON.parse(nft.metadata);
@@ -112,6 +114,7 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
 
     return r;
   }));
+
   /*
     const resCollectionData = await fetch(`https://deep-index.moralis.io/api/v2/${account}/nft/collections?chain=${chainName}`, options);
     const resCollection = await resCollectionData.json();
@@ -135,6 +138,7 @@ const getChainID = async () => {
   return parseInt(chainId);
 }
 
+//選択したNFT情報の取得？
 const handleCollectonSelect = async (chainName, setSelectedCollection, setSelectedCollectionName, setMintedNfts) => {
   let selectedCollection = "";
   let elements = document.getElementsByName('collections');
@@ -236,7 +240,8 @@ const handleNewContract = async (account, chainName, setDisable, setCollections,
   document.getElementById("reloadContract").click();
 
 }
-//申込みボタンを押した後
+
+//ミントした場合の機能（未使用）
 const handleMint = async (selectedCollection, chainName, setDisable, setMintedNfts, setShow) => {
   setDisable(true);
 
