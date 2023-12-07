@@ -363,7 +363,7 @@ const handleSubmit = async (account, nft, chainName, setDisable) => {
               : document.getElementById("XL-size").value
               ? "XL"
               : "",
-            Size_Other: document.getElementById("Other-size").value,
+            Size_Other: document.getElementById("Other-size").value !== "" ? document.getElementById("Other-size").value : "",
           },
         },
       ],
@@ -432,6 +432,13 @@ function App() {
       setTimeout(initializeAccount, 3000); // 3 seconds
     }
   }, [account]);
+
+  return (
+    <div>
+      <input type="radio" id="S-size" name="size" value="S" />
+      {/* 他の要素 */}
+    </div>
+  );
 
   return (
     <div className="App d-flex flex-column">
@@ -549,10 +556,21 @@ function App() {
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <div className="d-inline-block me-2">
-                    <input type="radio" id="S-size" name="size" value="S" checked={size === "S"} onChange={handleRadioChange} />
-                    <input type="radio" id="M-size" name="size" value="M" checked={size === "M"} onChange={handleRadioChange} />
-                    <input type="radio" id="L-size" name="size" value="L" checked={size === "L"} onChange={handleRadioChange} />
-                    <input type="radio" id="XL-size" name="size" value="XL" checked={size === "XL"} onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="S" name="size" value="S" id="S-size" checked={size === "S"} onChange={handleRadioChange} />
+                  </div>
+
+                  <div className="d-inline-block me-2">
+                    <Form.Check type="radio" label="M" name="size" value="M" id="M-size" checked={size === "M"} onChange={handleRadioChange} />
+                  </div>
+
+                  <div className="d-inline-block me-2">
+                    <Form.Check type="radio" label="L" name="size" value="L" id="L-size" checked={size === "L"} onChange={handleRadioChange} />
+                  </div>
+                  <div className="d-inline-block me-2">
+                    <Form.Check type="radio" label="XL" name="size" value="XL" id="XL-size" checked={size === "XL"} onChange={handleRadioChange} />
+                  </div>
+                  <div className="d-inline-block me-2">
+                    <Form.Check type="radio" label="その他" name="size" value="その他" checked={size === "その他"} onChange={handleRadioChange} />
                   </div>
                 </Form.Group>
 
