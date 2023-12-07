@@ -100,8 +100,7 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
           nft_name: tmp.name,
           present_detail: resTokenInfoJson.records[0].fields.Thanks_Gift,
           token_address: nft.token_address,
-          // token_id: nft.token_id,
-          key_id: nft.key_id,
+          token_id: nft.token_id,
           amount: nft.amount,
           key_id: resTokenInfoJson.records[0].fields.Key_ID,
         };
@@ -344,10 +343,6 @@ const handleSubmit = async (account, nft, chainName, setDisable) => {
       "Content-Type": "application/json",
     };
     const method = "POST";
-    // データ送信時
-    const sizeValue = ["S", "M", "L", "XL", "その他"].find((size) => document.getElementById(`Size_${size}`).checked);
-    const sizeOtherValue = sizeValue === "その他" ? document.getElementById("Size_Other_Input").value : "";
-
     const submitBody = {
       records: [
         {
@@ -359,8 +354,6 @@ const handleSubmit = async (account, nft, chainName, setDisable) => {
             Address: document.getElementById("Address").value,
             Tel: document.getElementById("Tel").value,
             Mail: document.getElementById("Mail").value,
-            Size: sizeValue,
-            Size_Other: sizeOtherValue,
           },
         },
       ],
@@ -402,21 +395,11 @@ function App() {
   };
   const [checkboxes, setCheckboxes] = useState({ checkbox1: false });
   const [size, setSize] = useState("M"); // デフォルトのサイズを設定
-  const [otherSize, setOtherSize] = useState(""); // 「その他」サイズの状態
-
   const handleCheckboxChange = (event) => {
     setCheckboxes({ ...checkboxes, [event.target.name]: event.target.checked });
   };
   const handleRadioChange = (event) => {
     setSize(event.target.value);
-    // 他のサイズが選択された場合、otherSize をリセット
-    if (event.target.value !== "その他") {
-      setOtherSize("");
-    }
-  };
-
-  const handleOtherSizeChange = (event) => {
-    setOtherSize(event.target.value);
   };
 
   // const handleSelect = (selectedIndex, e) => {
@@ -531,95 +514,85 @@ function App() {
             </Table>
             {/* 選択したNFTによって変わる */}
             {/* オリジナルTシャツ	*/}
-            {selectedNft &&
-              (selectedNft.key_id === "rec65kFu48ut5GPhC" ||
-                selectedNft.key_id === "recB1VbiT6bR7TMnH" ||
-                selectedNft.key_id === "recqCurt5f435BcVf" ||
-                selectedNft.key_id === "recj2JF2UnJU2ixXw" ||
-                selectedNft.key_id === "recyBnzU9IzYtJuCT") && (
-                <Form>
-                  <Form.Group className="mb-3">
-                    <Form.Label>お名前</Form.Label>
-                    <Form.Control id="Name" type="text" />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>郵便番号</Form.Label>
-                    <Form.Control id="Zip_Code" type="text" placeholder="000-0000" />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>ご住所</Form.Label>
-                    <Form.Control id="Address" type="text" placeholder="都道府県市町村番地建物" />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>電話番号</Form.Label>
-                    <Form.Control id="Tel" type="text" placeholder="000-0000-0000" />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>通知先メールアドレス</Form.Label>
-                    <Form.Control id="Mail" type="email" placeholder="experience@metagri-labo.com" />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>サイズ</Form.Label>
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <div className="d-inline-block me-2">
-                      <Form.Check type="radio" label="S" name="size" value="S" id="Size_S" checked={size === "S"} onChange={handleRadioChange} />
-                    </div>
+            {selectedNft && selectedNft.token_id === "5" && (
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>お名前</Form.Label>
+                  <Form.Control id="Name" type="text" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>郵便番号</Form.Label>
+                  <Form.Control id="Zip_Code" type="text" placeholder="000-0000" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>ご住所</Form.Label>
+                  <Form.Control id="Address" type="text" placeholder="都道府県市町村番地建物" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>電話番号</Form.Label>
+                  <Form.Control id="Tel" type="text" placeholder="000-0000-0000" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>通知先メールアドレス</Form.Label>
+                  <Form.Control id="Mail" type="email" placeholder="experience@metagri-labo.com" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>サイズ</Form.Label>
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <div className="d-inline-block me-2">
+                    <Form.Check type="radio" label="S" name="size" value="S" checked={size === "S"} onChange={handleRadioChange} />
+                  </div>
 
-                    <div className="d-inline-block me-2">
-                      <Form.Check type="radio" label="M" name="size" value="M" id="Size_M" checked={size === "M"} onChange={handleRadioChange} />
-                    </div>
+                  <div className="d-inline-block me-2">
+                    <Form.Check type="radio" label="M" name="size" value="M" checked={size === "M"} onChange={handleRadioChange} />
+                  </div>
 
-                    <div className="d-inline-block me-2">
-                      <Form.Check type="radio" label="L" name="size" value="L" id="Size_L" checked={size === "L"} onChange={handleRadioChange} />
-                    </div>
-                    <div className="d-inline-block me-2">
-                      <Form.Check type="radio" label="XL" name="size" value="XL" id="Size_XL" checked={size === "XL"} onChange={handleRadioChange} />
-                    </div>
-                    <div className="d-inline-block me-2">
-                      <Form.Check type="radio" label="その他" name="size" value="その他" checked={size === "その他"} onChange={handleRadioChange} />
-                    </div>
+                  <div className="d-inline-block me-2">
+                    <Form.Check type="radio" label="L" name="size" value="L" checked={size === "L"} onChange={handleRadioChange} />
+                  </div>
+                  <div className="d-inline-block me-2">
+                    <Form.Check type="radio" label="XL" name="size" value="XL" checked={size === "XL"} onChange={handleRadioChange} />
+                  </div>
+                  <div className="d-inline-block me-2">
+                    <Form.Check type="radio" label="その他" name="size" value="その他" checked={size === "その他"} onChange={handleRadioChange} />
+                  </div>
+                </Form.Group>
+
+                {/* その他が選択された場合のテキストフィールド */}
+                {size === "その他" && (
+                  <Form.Group className="mb-3">
+                    <Form.Label>その他サイズ</Form.Label>
+                    <Form.Control type="text" />
                   </Form.Group>
-
-                  {/* その他が選択された場合のテキストフィールド */}
-                  {size === "その他" && (
-                    <Form.Group className="mb-3">
-                      <Form.Label>その他サイズ</Form.Label>
-                      <Form.Control type="text" id="Size_Other_Input" />
-                    </Form.Group>
-                  )}
-                </Form>
-              )}
+                )}
+              </Form>
+            )}
             {/* デフォルト */}
-            {selectedNft &&
-              (selectedNft.key_id !== "rec65kFu48ut5GPhC" ||
-                selectedNft.key_id !== "recB1VbiT6bR7TMnH" ||
-                selectedNft.key_id !== "recqCurt5f435BcVf" ||
-                selectedNft.key_id !== "recj2JF2UnJU2ixXw" ||
-                selectedNft.key_id !== "recyBnzU9IzYtJuCT") && (
-                <Form>
-                  <Form.Group className="mb-3">
-                    <Form.Label>お名前</Form.Label>
-                    <Form.Control id="Name" type="text" />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>郵便番号</Form.Label>
-                    <Form.Control id="Zip_Code" type="text" placeholder="000-0000" />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>ご住所</Form.Label>
-                    <Form.Control id="Address" type="text" placeholder="都道府県市町村番地建物" />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>電話番号</Form.Label>
-                    <Form.Control id="Tel" type="text" placeholder="000-0000-0000" />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>通知先メールアドレス</Form.Label>
-                    <Form.Control id="Mail" type="email" placeholder="experience@metagri-labo.com" />
-                  </Form.Group>
-                </Form>
-              )}
+            {selectedNft && selectedNft.token_id !== "5" && (
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>お名前</Form.Label>
+                  <Form.Control id="Name" type="text" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>郵便番号</Form.Label>
+                  <Form.Control id="Zip_Code" type="text" placeholder="000-0000" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>ご住所</Form.Label>
+                  <Form.Control id="Address" type="text" placeholder="都道府県市町村番地建物" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>電話番号</Form.Label>
+                  <Form.Control id="Tel" type="text" placeholder="000-0000-0000" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>通知先メールアドレス</Form.Label>
+                  <Form.Control id="Mail" type="email" placeholder="experience@metagri-labo.com" />
+                </Form.Group>
+              </Form>
+            )}
             {/* </Form> */}
             {disable === false ? (
               <>
