@@ -408,7 +408,7 @@ function App() {
     setSize(e.target.value);
   };
 
-  const specificKeys = ["rec65kFu48ut5GPhC", "recB1VbiT6bR7TMnH", "recqCurt5f435BcVf", "recj2JF2UnJU2ixXw", "reclz4Dg5QS8VnJZ0", "recyBnzU9IzYtJuCT"]; //オリジナルTシャツのNFTのkey
+  const specificKeys = ["rec65kFu48ut5GPhC", "recB1VbiT6bR7TMnH", "recqCurt5f435BcVf", "recj2JF2UnJU2ixXw", "reclz4Dg5QS8VnJZ0", "recyBnzU9IzYtJuCT", "recK0sK8Hzq6ffghW"]; //オリジナルTシャツのNFTのkey
   // const handleSelect = (selectedIndex, e) => {
   //   setIndex(selectedIndex);
   // };
@@ -432,13 +432,6 @@ function App() {
       setTimeout(initializeAccount, 3000); // 3 seconds
     }
   }, [account]);
-
-  return (
-    <div>
-      <input type="radio" id="S-size" name="size" value="S" />
-      {/* 他の要素 */}
-    </div>
-  );
 
   return (
     <div className="App d-flex flex-column">
