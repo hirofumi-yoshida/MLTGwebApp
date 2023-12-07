@@ -549,21 +549,21 @@ function App() {
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="S" name="size" value="S" id="S-size" checked={size === "S"} onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="S" name="size" value="S" id="S-size" onChange={handleRadioChange} />
                   </div>
 
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="M" name="size" value="M" id="M-size" checked={size === "M"} onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="M" name="size" value="M" id="M-size" onChange={handleRadioChange} />
                   </div>
 
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="L" name="size" value="L" id="L-size" checked={size === "L"} onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="L" name="size" value="L" id="L-size" onChange={handleRadioChange} />
                   </div>
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="XL" name="size" value="XL" id="XL-size" checked={size === "XL"} onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="XL" name="size" value="XL" id="XL-size" onChange={handleRadioChange} />
                   </div>
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="その他" name="size" value="その他" checked={size === "その他"} onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="その他" name="size" value="その他" onChange={handleRadioChange} />
                   </div>
                 </Form.Group>
 
