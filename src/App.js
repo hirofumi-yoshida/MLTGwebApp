@@ -354,13 +354,13 @@ const handleSubmit = async (account, nft, chainName, setDisable) => {
             Address: document.getElementById("Address").value,
             Tel: document.getElementById("Tel").value,
             Mail: document.getElementById("Mail").value,
-            Size: document.getElementById("S-size").value
+            Size: document.getElementById("S-size").checked
               ? "S"
-              : document.getElementById("M-size").value
+              : document.getElementById("M-size").checked
               ? "M"
-              : document.getElementById("L-size").value
+              : document.getElementById("L-size").checked
               ? "L"
-              : document.getElementById("XL-size").value
+              : document.getElementById("XL-size").checked
               ? "XL"
               : "",
             Size_Other: document.getElementById("Other-size").value !== "" ? document.getElementById("Other-size").value : "",
