@@ -354,6 +354,16 @@ const handleSubmit = async (account, nft, chainName, setDisable) => {
             Address: document.getElementById("Address").value,
             Tel: document.getElementById("Tel").value,
             Mail: document.getElementById("Mail").value,
+            Size: document.getElementById("S-size").checked
+              ? "S"
+              : document.getElementById("M-size").checked
+              ? "M"
+              : document.getElementById("L-size").checked
+              ? "L"
+              : document.getElementById("XL-size").checked
+              ? "XL"
+              : "Other",
+            Size_Other: document.getElementById("Other-size").value,
           },
         },
       ],
@@ -402,6 +412,7 @@ function App() {
     setSize(event.target.value);
   };
 
+  const specificKeys = ["rec65kFu48ut5GPhC", "recB1VbiT6bR7TMnH", "recqCurt5f435BcVf", "recj2JF2UnJU2ixXw", "reclz4Dg5QS8VnJZ0", "recyBnzU9IzYtJuCT"]; //オリジナルTシャツのNFTのkey
   // const handleSelect = (selectedIndex, e) => {
   //   setIndex(selectedIndex);
   // };
@@ -497,6 +508,7 @@ function App() {
                           )}
                         </td>
                         {/* <td>{nft.token_id}</td> */}
+                        {/* <td>{nft.key_id}</td> */}
                         <td>{nft.contract_name}</td>
                         <td>{nft.nft_name}</td>
                         <td>{nft.present_detail}</td>
@@ -514,7 +526,7 @@ function App() {
             </Table>
             {/* 選択したNFTによって変わる */}
             {/* オリジナルTシャツ	*/}
-            {selectedNft && selectedNft.token_id === "5" && (
+            {selectedNft && specificKeys.includes(selectedNft.key_id) && (
               <Form>
                 <Form.Group className="mb-3">
                   <Form.Label>お名前</Form.Label>
@@ -541,18 +553,18 @@ function App() {
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="S" name="size" value="S" checked={size === "S"} onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="S" name="size" value="S" id="S-size" checked={size === "S"} onChange={handleRadioChange} />
                   </div>
 
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="M" name="size" value="M" checked={size === "M"} onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="M" name="size" value="M" id="M-size" checked={size === "M"} onChange={handleRadioChange} />
                   </div>
 
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="L" name="size" value="L" checked={size === "L"} onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="L" name="size" value="L" id="L-size" checked={size === "L"} onChange={handleRadioChange} />
                   </div>
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="XL" name="size" value="XL" checked={size === "XL"} onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="XL" name="size" value="XL" id="XL-size" checked={size === "XL"} onChange={handleRadioChange} />
                   </div>
                   <div className="d-inline-block me-2">
                     <Form.Check type="radio" label="その他" name="size" value="その他" checked={size === "その他"} onChange={handleRadioChange} />
@@ -563,13 +575,13 @@ function App() {
                 {size === "その他" && (
                   <Form.Group className="mb-3">
                     <Form.Label>その他サイズ</Form.Label>
-                    <Form.Control type="text" />
+                    <Form.Control type="text" id="Other-size" />
                   </Form.Group>
                 )}
               </Form>
             )}
             {/* デフォルト */}
-            {selectedNft && selectedNft.token_id !== "5" && (
+            {selectedNft && !specificKeys.includes(selectedNft.key_id) && (
               <Form>
                 <Form.Group className="mb-3">
                   <Form.Label>お名前</Form.Label>
