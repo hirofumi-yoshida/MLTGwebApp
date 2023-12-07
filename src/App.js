@@ -404,12 +404,12 @@ function App() {
     setShowDetail(true);
   };
   const [checkboxes, setCheckboxes] = useState({ checkbox1: false });
-  const [size, setSize] = useState("M"); // デフォルトのサイズを設定
+  const [size, setSize] = useState(""); // デフォルトのサイズを設定
   const handleCheckboxChange = (event) => {
     setCheckboxes({ ...checkboxes, [event.target.name]: event.target.checked });
   };
-  const handleRadioChange = (event) => {
-    setSize(event.target.value);
+  const handleRadioChange = (e) => {
+    setSize(e.target.value);
   };
 
   const specificKeys = ["rec65kFu48ut5GPhC", "recB1VbiT6bR7TMnH", "recqCurt5f435BcVf", "recj2JF2UnJU2ixXw", "reclz4Dg5QS8VnJZ0", "recyBnzU9IzYtJuCT"]; //オリジナルTシャツのNFTのkey
