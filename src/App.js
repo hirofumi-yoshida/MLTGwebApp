@@ -332,6 +332,16 @@ const handleSubmit = async (account, nft, chainName, setDisable) => {
   const walletAddress = "0x6D8Dd5Cf6fa8DB2be08845b1380e886BFAb03E07";
 
   const amount = 1;
+  let selectedSize = "";
+  if (document.getElementById("S-size").checked) {
+    selectedSize = document.getElementById("S-size").value;
+  } else if (document.getElementById("M-size").checked) {
+    selectedSize = document.getElementById("M-size").value;
+  } else if (document.getElementById("L-size").checked) {
+    selectedSize = document.getElementById("L-size").value;
+  } else if (document.getElementById("XL-size").checked) {
+    selectedSize = document.getElementById("XL-size").value;
+  }
 
   const tokenId = nft.token_id;
 
@@ -354,16 +364,8 @@ const handleSubmit = async (account, nft, chainName, setDisable) => {
             Address: document.getElementById("Address").value,
             Tel: document.getElementById("Tel").value,
             Mail: document.getElementById("Mail").value,
-            Size: document.getElementById("S-size").checked
-              ? "S"
-              : document.getElementById("M-size").checked
-              ? "M"
-              : document.getElementById("L-size").checked
-              ? "L"
-              : document.getElementById("XL-size").checked
-              ? "XL"
-              : "",
-            Size_Other: document.getElementById("Other-size").value !== "" ? document.getElementById("Other-size").value : "テストd",
+            Size: selectedSize,
+            Size_Other: document.getElementById("Other-size").value,
           },
         },
       ],
