@@ -315,7 +315,7 @@ const handleLogout = async () => {
   window.location.href = "/";
 };
 
-const handleSubmit = async (account, nft, chainName, setDisable) => {
+const handleSubmit = async (account, nft, chainName, setDisable, size) => {
   setDisable(true);
 
   let cn = chainName;
@@ -332,16 +332,6 @@ const handleSubmit = async (account, nft, chainName, setDisable) => {
   const walletAddress = "0x6D8Dd5Cf6fa8DB2be08845b1380e886BFAb03E07";
 
   const amount = 1;
-  let selectedSize = "";
-  if (document.getElementById("S-size").checked) {
-    selectedSize = document.getElementById("S-size").value;
-  } else if (document.getElementById("M-size").checked) {
-    selectedSize = document.getElementById("M-size").value;
-  } else if (document.getElementById("L-size").checked) {
-    selectedSize = document.getElementById("L-size").value;
-  } else if (document.getElementById("XL-size").checked) {
-    selectedSize = document.getElementById("XL-size").value;
-  }
 
   const tokenId = nft.token_id;
 
@@ -364,7 +354,7 @@ const handleSubmit = async (account, nft, chainName, setDisable) => {
             Address: document.getElementById("Address").value,
             Tel: document.getElementById("Tel").value,
             Mail: document.getElementById("Mail").value,
-            Size: selectedSize,
+            Size: size,
             Size_Other: document.getElementById("Other-size").value,
           },
         },
@@ -565,7 +555,7 @@ function App() {
                     <Form.Check type="radio" label="XL" name="size" value="XL" id="XL-size" onChange={handleRadioChange} />
                   </div>
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="その他" name="size" value="その他" onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="その他" value="その他" onChange={handleRadioChange} />
                   </div>
                 </Form.Group>
 
