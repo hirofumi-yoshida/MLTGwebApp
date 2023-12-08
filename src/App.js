@@ -363,7 +363,7 @@ const handleSubmit = async (account, nft, chainName, setDisable) => {
               : document.getElementById("XL-size").checked
               ? "XL"
               : "",
-            Size_Other: document.getElementById("Other-size").value !== "" ? document.getElementById("Other-size").value : "",
+            Size_Other: document.getElementById("Other-size").value !== "" ? document.getElementById("Other-size").value : "テストd",
           },
         },
       ],
