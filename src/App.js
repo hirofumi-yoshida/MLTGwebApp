@@ -408,7 +408,7 @@ function App() {
     setSize(e.target.value);
   };
 
-  const specificKeys = ["rec65kFu48ut5GPhC", "recB1VbiT6bR7TMnH", "recqCurt5f435BcVf", "recj2JF2UnJU2ixXw", "reclz4Dg5QS8VnJZ0", "recyBnzU9IzYtJuCT", "recK0sK8Hzq6ffghW"]; //オリジナルTシャツのNFTのkey
+  const specificKeys = ["rec65kFu48ut5GPhC", "recB1VbiT6bR7TMnH", "recqCurt5f435BcVf", "recj2JF2UnJU2ixXw", "reclz4Dg5QS8VnJZ0", "recyBnzU9IzYtJuCT", "recK0sK8Hzq6ffghW", "recs6Mdq8UFgEjpPD"]; //オリジナルTシャツのNFTのkey
   // const handleSelect = (selectedIndex, e) => {
   //   setIndex(selectedIndex);
   // };
