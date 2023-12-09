@@ -315,9 +315,7 @@ const handleLogout = async () => {
   window.location.href = "/";
 };
 
-const handleSubmit = async (account, nft, chainName, setDisable, size) => {
-  setDisable(true);
-
+const handleSubmit = async (account, nft, chainName, size, otherSize, handleClose, setIsSubmitting) => {
   let cn = chainName;
   if (chainName === "eth") {
     cn = "mainnet";
@@ -335,6 +333,36 @@ const handleSubmit = async (account, nft, chainName, setDisable, size) => {
 
   const tokenId = nft.token_id;
 
+  const name = document.getElementById("Name").value;
+  const zipCode = document.getElementById("Zip_Code").value;
+  const address = document.getElementById("Address").value;
+  const tel = document.getElementById("Tel").value;
+  const mail = document.getElementById("Mail").value;
+  // const otherSizeElement = document.getElementById("Other-size");
+  // const otherSize = otherSizeElement ? otherSizeElement.value : "";
+
+  // 確認ダイアログのメッセージ
+  let confirmMessage = `
+  以下の情報で送信してもよろしいですか？
+
+  名前: ${name}
+  郵便番号: ${zipCode}
+  住所: ${address}
+  電話番号: ${tel}
+  メール: ${mail}\n`;
+  if (size) confirmMessage += `  サイズ: ${size}\n`;
+  if (otherSize) confirmMessage += `  その他サイズ: ${otherSize}\n`;
+
+  // 確認ダイアログを表示
+  if (!window.confirm(confirmMessage)) {
+    // ユーザーがキャンセルを選択した場合、処理を中断
+    handleClose();
+    setIsSubmitting(false); // 送信状態を解除
+    return;
+  }
+
+  setIsSubmitting(true); // 送信状態を開始
+
   try {
     await contract.erc1155.transfer(walletAddress, tokenId, amount);
 
@@ -349,24 +377,41 @@ const handleSubmit = async (account, nft, chainName, setDisable, size) => {
           fields: {
             Key_ID: nft.key_id,
             Thanks_Gift: nft.present_detail,
-            Name: document.getElementById("Name").value,
-            Zip_Code: document.getElementById("Zip_Code").value,
-            Address: document.getElementById("Address").value,
-            Tel: document.getElementById("Tel").value,
-            Mail: document.getElementById("Mail").value,
+            Name: name,
+            Zip_Code: zipCode,
+            Address: address,
+            Tel: tel,
+            Mail: mail,
             Size: size,
-            Size_Other: document.getElementById("Other-size").value,
+            Size_Other: otherSize,
           },
         },
       ],
     };
+
     const body = JSON.stringify(submitBody);
+    console.log(body);
     const resTokenInfo = await fetch(`https://api.airtable.com/v0/appq0R9tJ2BkvKhRt/tbld2laNlKCi7B2GW`, { method, headers, body });
     document.getElementById("GetAccountButton").click();
   } catch (error) {
     console.error(error);
+    setIsSubmitting(false); // 送信状態を解除
   }
-  setDisable(false);
+  setIsSubmitting(false); // 送信状態を解除
+  handleClose(); // モーダルを閉じる
+
+  // Clearing form fields
+  document.getElementById("Name").value = "";
+  document.getElementById("Zip_Code").value = "";
+  document.getElementById("Address").value = "";
+  document.getElementById("Tel").value = "";
+  document.getElementById("Mail").value = "";
+  document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+    radio.checked = false;
+  });
+  if (document.getElementById("Other-size")) {
+    document.getElementById("Other-size").value = "";
+  }
 };
 
 function App() {
@@ -386,21 +431,40 @@ function App() {
   const [selectedCollectionName, setSelectedCollectionName] = useState("");
   const [selectedGiftNft, setSelectedGiftNft] = useState("");
   const location = window.location.pathname.toLowerCase();
-  const handleClose = () => setShow(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleClose = () => {
+    size = ""; // サイズをリセット
+    otherSize = ""; // その他のサイズをリセット
+    setShow(false);
+    setIsSubmitting(false); // 送信状態を解除
+  };
   const handleShow = () => setShow(true);
   const handleCloseNewToken = () => setShowNewToken(false);
   const handleShowNewToken = () => setShowNewToken(true);
   const handleCloseDetail = () => setShowDetail(false);
   const handleShowDetail = async (nft) => {
     setSelectedNft(nft);
+    // ダイアログの内容をリセット
+    setSize("");
+    setOtherSize("");
+    // 他のダイアログ関連の状態もリセット
     setShowDetail(true);
   };
+
   const [size, setSize] = useState(""); // デフォルトのサイズを設定
-  const handleRadioChange = (e) => {
-    setSize(e.target.value);
+  const [otherSize, setOtherSize] = useState(""); // 「その他」のサイズを設定
+  const handleRadioChange = (event) => {
+    setSize(event.target.value);
+    if (event.target.value !== "その他") {
+      setOtherSize(""); // 「その他」以外が選択されたら、テキストフィールドをクリア
+    }
   };
 
-  const specificKeys = ["rec65kFu48ut5GPhC", "recB1VbiT6bR7TMnH", "recqCurt5f435BcVf", "recj2JF2UnJU2ixXw", "reclz4Dg5QS8VnJZ0", "recyBnzU9IzYtJuCT", "recK0sK8Hzq6ffghW", "recs6Mdq8UFgEjpPD"]; //オリジナルTシャツのNFTのkey
+  const handleOtherSizeChange = (event) => {
+    setOtherSize(event.target.value);
+  };
+
+  const specificKeys = ["rec65kFu48ut5GPhC", "recB1VbiT6bR7TMnH", "recqCurt5f435BcVf", "recj2JF2UnJU2ixXw", "reclz4Dg5QS8VnJZ0", "recyBnzU9IzYtJuCT", "recK0sK8Hzq6ffghW"]; //オリジナルTシャツのNFTのkey
   // const handleSelect = (selectedIndex, e) => {
   //   setIndex(selectedIndex);
   // };
@@ -502,7 +566,7 @@ function App() {
                         <td>{nft.present_detail}</td>
                         <td>{nft.amount}</td>
                         <td>
-                          <input class="form-check-input" type="radio" name="flexRadioDefault" id={index} onClick={() => setSelectedNft(nft)} />
+                          <input class="form-check-input" type="radio" name="flexRadioDefault" id={index} onClick={() => handleShowDetail(nft)} />
                         </td>
                       </tr>
                     );
@@ -555,7 +619,7 @@ function App() {
                     <Form.Check type="radio" label="XL" name="size" value="XL" id="XL-size" onChange={handleRadioChange} />
                   </div>
                   <div className="d-inline-block me-2">
-                    <Form.Check type="radio" label="その他" value="その他" onChange={handleRadioChange} />
+                    <Form.Check type="radio" label="その他" name="size" value="その他" id="other" onChange={handleRadioChange} />
                   </div>
                 </Form.Group>
 
@@ -563,7 +627,7 @@ function App() {
                 {size === "その他" && (
                   <Form.Group className="mb-3">
                     <Form.Label>その他サイズ</Form.Label>
-                    <Form.Control type="text" id="Other-size" />
+                    <Form.Control type="text" id="Other-size" value={otherSize} onChange={handleOtherSizeChange} />
                   </Form.Group>
                 )}
               </Form>
@@ -596,21 +660,21 @@ function App() {
             {/* </Form> */}
             {disable === false ? (
               <>
-                <Button className="px-4" variant="outline-dark" onClick={handleClose}>
+                {/* <Button className="px-4" variant="outline-dark" onClick={handleClose}>
                   キャンセル
-                </Button>
-                <Button className="px-4" variant="dark" onClick={() => handleSubmit(account, selectedNft, chainName, setDisable)}>
+                </Button> */}
+                <Button className="px-4" variant="outline-dark" disabled={isSubmitting} onClick={() => handleSubmit(account, selectedNft, chainName, size, otherSize, handleClose, setIsSubmitting)}>
                   申し込む
                 </Button>
               </>
             ) : (
               <>
-                <Button className="px-4" variant="outline-dark" disabled={true}>
+                {/* <Button className="px-4" variant="outline-dark" disabled={true}>
                   キャンセル
-                </Button>
-                <Button className="px-4" variant="dark" disabled={true}>
-                  <span className="me-2 spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  <span>数分かかる場合があります...</span>
+                </Button> */}
+                <Button className="px-4" variant="dark" disabled={isSubmitting}>
+                  {isSubmitting && <span className="me-2 spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+                  {isSubmitting ? "数分かかる場合があります..." : "申し込む"}
                 </Button>
               </>
             )}
