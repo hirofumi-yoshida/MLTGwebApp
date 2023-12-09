@@ -344,7 +344,7 @@ const handleSubmit = async (account, nft, chainName, size, otherSize, handleClos
   // 確認ダイアログのメッセージ
   let confirmMessage = `
   以下の情報で送信してもよろしいですか？
-
+  
   名前: ${name}
   郵便番号: ${zipCode}
   住所: ${address}
@@ -393,6 +393,7 @@ const handleSubmit = async (account, nft, chainName, size, otherSize, handleClos
     console.log(body);
     const resTokenInfo = await fetch(`https://api.airtable.com/v0/appq0R9tJ2BkvKhRt/tbld2laNlKCi7B2GW`, { method, headers, body });
     document.getElementById("GetAccountButton").click();
+    alert(`${nft.nft_name}の交換完了しました。到着するまでお楽しみに！`);
   } catch (error) {
     console.error(error);
     setIsSubmitting(false); // 送信状態を解除
@@ -400,7 +401,7 @@ const handleSubmit = async (account, nft, chainName, size, otherSize, handleClos
   setIsSubmitting(false); // 送信状態を解除
   handleClose(); // モーダルを閉じる
 
-  // Clearing form fields
+  // 送信後にフォームをリセット
   document.getElementById("Name").value = "";
   document.getElementById("Zip_Code").value = "";
   document.getElementById("Address").value = "";
@@ -464,7 +465,7 @@ function App() {
     setOtherSize(event.target.value);
   };
 
-  const specificKeys = ["rec65kFu48ut5GPhC", "recB1VbiT6bR7TMnH", "recqCurt5f435BcVf", "recj2JF2UnJU2ixXw", "reclz4Dg5QS8VnJZ0", "recyBnzU9IzYtJuCT", "recK0sK8Hzq6ffghW"]; //オリジナルTシャツのNFTのkey
+  const specificKeys = ["rec65kFu48ut5GPhC", "recB1VbiT6bR7TMnH", "recqCurt5f435BcVf", "recj2JF2UnJU2ixXw", "reclz4Dg5QS8VnJZ0", "recyBnzU9IzYtJuCT", "recK0sK8Hzq6ffghW", "recs6Mdq8UFgEjpPD"]; //オリジナルTシャツのNFTのkey
   // const handleSelect = (selectedIndex, e) => {
   //   setIndex(selectedIndex);
   // };
