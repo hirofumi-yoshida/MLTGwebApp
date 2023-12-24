@@ -665,7 +665,8 @@ function App() {
                   キャンセル
                 </Button> */}
                 <Button className="px-4" variant="outline-dark" disabled={isSubmitting} onClick={() => handleSubmit(account, selectedNft, chainName, size, otherSize, handleClose, setIsSubmitting)}>
-                  申し込む
+                  {isSubmitting && <span className="me-2 spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+                  {isSubmitting ? "数分かかる場合があります..." : "申し込む"}
                 </Button>
               </>
             ) : (
