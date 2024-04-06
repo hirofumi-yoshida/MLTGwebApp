@@ -74,40 +74,83 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
   const resNft = await resNftData.json();
   console.log(JSON.stringify(resNft));
 
-  let nfts = [];
-  for (let nft of resNft.result) {
-    const tmp = JSON.parse(nft.metadata);
-    console.log(JSON.stringify(tmp));
-    if (tmp !== null) {
-      const optionTokenInfo = {
-        method: "GET",
-        headers: {
-          // Authorization: process.env.AIRTABLE_API_KEY, //AirTableのAPIキー
-          Authorization: "Bearer keypjfrOALL1xCF3r",
-        },
-      };
-      const resTokenInfo = await fetch(
-        //airTableのNFTのaddressとIDを取得している
-        `https://api.airtable.com/v0/appq0R9tJ2BkvKhRt/tblGeRuC0iRypjYfl?filterByFormula=AND(%7BContract_ID%7D%3D%22${nft.token_address}%22%2C%7BToken_ID%7D%3D${nft.token_id})`,
-        optionTokenInfo
-      );
-      const resTokenInfoJson = await resTokenInfo.json();
-      if (resTokenInfoJson.records[0] !== undefined) {
-        console.log(JSON.stringify(resTokenInfoJson.records[0]));
-        const nftinfo = {
-          contract_name: nft.name,
-          image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
-          nft_name: tmp.name,
-          present_detail: resTokenInfoJson.records[0].fields.Thanks_Gift,
-          token_address: nft.token_address,
-          token_id: nft.token_id,
-          amount: nft.amount,
-          key_id: resTokenInfoJson.records[0].fields.Key_ID,
-        };
-        nfts.push(nftinfo);
+  const hirosukeapi = 'patyTLuHtGlLraosF.8d6f778f55fc009bea73e9a9f41466b0b10be363b14e74d95b63af04b1fd1807';
+  const optionInfo = {
+    method: "GET",
+    headers: {
+      // Authorization: process.env.AIRTABLE_API_KEY, //AirTableのAPIキー
+      Authorization: "Bearer patyTLuHtGlLraosF.8d6f778f55fc009bea73e9a9f41466b0b10be363b14e74d95b63af04b1fd1807",
+    },
+  };
+  const resInfo = await fetch(
+    //airTableに登録されているデータを取得
+    `https://api.airtable.com/v0/appuYUHcDPRV7o8wx/tblnjog4lKdR2qZay`,
+    optionInfo
+  );
+  const resInfoJson = await resInfo.json();
+  const airtableData = resInfoJson.records;
+  const nftData = resNft.result;
+
+  // Airtableデータからインデックスを作成する関数
+  const createIndex = (airtableData) => {
+    const index = new Map();
+    airtableData.forEach(entry => {
+      const key = `${entry.fields.Contract_ID}|${entry.fields.Token_ID}`;
+      index.set(key, entry);
+    });
+    return index;
+  };
+
+  // インデックスを使用して一致するデータを探す関数
+  const findMatchingDataWithIndex = (airtableData, nftData) => {
+    const index = createIndex(airtableData);
+    const matchedEntries = [];
+    let nfts = [];
+
+    nftData.forEach(nft => {
+      const key = `${nft.token_address}|${nft.token_id}`;
+      if (index.has(key)) {
+        const airtableEntry = index.get(key);
+        matchedEntries.push({
+          airtableId: airtableEntry.id,
+          nftTokenId: nft.token_id,
+          nftTokenAddress: nft.token_address,
+          nftData: nft,  // nftデータ全体を保存
+          airtableEntry: airtableEntry
+        });
       }
+    });
+
+    // 一致したデータから新しいオブジェクト配列を作成
+    const detailedEntries = matchedEntries.map(match => {
+      const tmp = JSON.parse(match.nftData.metadata);
+      return {
+        contract_name: match.nftData.name,
+        image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
+        nft_name: tmp.name,
+        present_detail: match.airtableEntry.fields.Thanks_Gift,
+        token_address: match.nftTokenAddress,
+        token_id: match.nftTokenId,
+        amount: match.nftData.amount,
+        key_id: match.airtableEntry.fields.Key_ID,
+      };
+    });
+
+    if (detailedEntries.length > 0) {
+      detailedEntries.forEach(entry => {
+        console.log('Detailed Entry:', entry);
+        nfts.push(entry);
+      });
+    } else {
+      console.log('No matches found.');
     }
-  }
+    return (nfts);
+  };
+
+  // 関数を呼び出し
+  const nfts = findMatchingDataWithIndex(airtableData, nftData);
+  console.log(nfts);
+
 
   //発行日でソート
   setNfts(
@@ -121,6 +164,42 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
       return r;
     })
   );
+
+  // let nfts = [];
+  // for (let nft of resNft.result) {
+  //   const tmp = JSON.parse(nft.metadata);
+  //   console.log(JSON.stringify(tmp));
+  //   if (tmp !== null) {
+  // const optionTokenInfo = {
+  //   method: "GET",
+  //   headers: {
+  //     // Authorization: process.env.AIRTABLE_API_KEY, //AirTableのAPIキー
+  //     Authorization: "Bearer keypjfrOALL1xCF3r",
+  //   },
+  // };
+  // const resTokenInfo = await fetch(
+  //   //airTableのNFTのaddressとIDを取得している
+  //   `https://api.airtable.com/v0/appq0R9tJ2BkvKhRt/tbld2laNlKCi7B2GW?filterByFormula=AND(%7BContract_ID%7D%3D%22${nft.token_address}%22%2C%7BToken_ID%7D%3D${nft.token_id})`,
+  //   optionTokenInfo
+  // );
+  // const resTokenInfoJson = await resTokenInfo.json();
+  // if (resTokenInfoJson.records[0] !== undefined) {
+  //   console.log(JSON.stringify(resTokenInfoJson.records[0]));
+  //   const nftinfo = {
+  //     contract_name: nft.name,
+  //     image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
+  //     nft_name: tmp.name,
+  //     present_detail: resTokenInfoJson.records[0].fields.Thanks_Gift,
+  //     token_address: nft.token_address,
+  //     token_id: nft.token_id,
+  //     amount: nft.amount,
+  //     key_id: resTokenInfoJson.records[0].fields.Key_ID,
+  //   };
+  //   nfts.push(nftinfo);
+  // }
+  //  }
+  //}
+
 };
 
 const getChainName = async (chainId) => {
