@@ -446,7 +446,7 @@ const handleSubmit = async (account, nft, chainName, size, otherSize, handleClos
     await contract.erc1155.transfer(walletAddress, tokenId, amount);
 
     const headers = {
-      Authorization: "Bearer keypjfrOALL1xCF3r", //AirTableのAPIキー
+      Authorization: "Bearer patyTLuHtGlLraosF.8d6f778f55fc009bea73e9a9f41466b0b10be363b14e74d95b63af04b1fd1807",
       "Content-Type": "application/json",
     };
     const method = "POST";
@@ -470,7 +470,7 @@ const handleSubmit = async (account, nft, chainName, size, otherSize, handleClos
 
     const body = JSON.stringify(submitBody);
     console.log(body);
-    const resTokenInfo = await fetch(`https://api.airtable.com/v0/appq0R9tJ2BkvKhRt/tbld2laNlKCi7B2GW`, { method, headers, body });
+    const resTokenInfo = await fetch(`https://api.airtable.com/v0/appuYUHcDPRV7o8wx/tblgtvDqxDuA2hnbd`, { method, headers, body });
     document.getElementById("GetAccountButton").click();
     alert(`${nft.nft_name}の交換完了しました。到着するまでお楽しみに！`);
   } catch (error) {
